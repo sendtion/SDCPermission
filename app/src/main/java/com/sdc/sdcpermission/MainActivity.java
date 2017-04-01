@@ -1,0 +1,355 @@
+package com.sdc.sdcpermission;
+
+import android.Manifest;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
+
+/**
+ * Android 6.0原生系统运行时权限适配
+ * 在联想乐檬X3测试通过
+ */
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    private static final String TAG = "MainActivity";//快捷键logt
+
+    private TextView tv_sdcard;
+    private TextView tv_sms;
+    private TextView tv_phone;
+    private TextView tv_contacts;
+    private TextView tv_location;
+    private TextView tv_record;
+    private TextView tv_camera;
+    private TextView tv_calender;
+    private TextView tv_sensor;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        initViews();
+    }
+
+    private void initViews() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        tv_contacts = (TextView) findViewById(R.id.tv_contacts);
+        tv_sms = (TextView) findViewById(R.id.tv_sms);
+        tv_phone = (TextView) findViewById(R.id.tv_phone);
+        tv_location = (TextView) findViewById(R.id.tv_location);
+        tv_sdcard = (TextView) findViewById(R.id.tv_sdcard);
+        tv_record = (TextView) findViewById(R.id.tv_record);
+        tv_calender = (TextView) findViewById(R.id.tv_calender);
+        tv_camera = (TextView) findViewById(R.id.tv_camera);
+        tv_sensor = (TextView) findViewById(R.id.tv_sensor);
+
+        tv_contacts.setOnClickListener(this);
+        tv_sms.setOnClickListener(this);
+        tv_phone.setOnClickListener(this);
+        tv_location.setOnClickListener(this);
+        tv_sdcard.setOnClickListener(this);
+        tv_record.setOnClickListener(this);
+        tv_calender.setOnClickListener(this);
+        tv_camera.setOnClickListener(this);
+        tv_sensor.setOnClickListener(this);
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_miui) {
+            //跳转到MIUI的权限适配界面
+            Intent intent = new Intent();
+            intent.setClass(this, MIUIActivity.class);
+            startActivity(intent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showToast(String text){
+        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.tv_contacts:
+                //READ_CONTACTS是读取联系人
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) !=
+                        PackageManager.PERMISSION_GRANTED){//拒绝了权限，或者没有获得权限
+                    //如果没有权限则申请权限
+                    showTipsDialog("读取联系人", Manifest.permission.READ_CONTACTS, 101);
+                } else {
+                    showToast("已经获得‘读取联系人’权限");
+                }
+                break;
+            case R.id.tv_location:
+                //ACCESS_FINE_LOCATION是GPS定位，ACCESS_COARSE_LOCATION是网络定位
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                        PackageManager.PERMISSION_GRANTED){//拒绝了权限，或者没有获得权限
+
+                    showTipsDialog("GPS定位", Manifest.permission.ACCESS_FINE_LOCATION, 102);
+                } else {
+                    showToast("已经获得‘GPS定位’权限");
+                }
+                break;
+            case R.id.tv_sdcard:
+                //READ_EXTERNAL_STORAGE是读取存储卡，
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) !=
+                        PackageManager.PERMISSION_GRANTED){//拒绝了权限，或者没有获得权限
+
+                    showTipsDialog("读存储卡", Manifest.permission.READ_EXTERNAL_STORAGE, 103);
+                } else {
+                    showToast("已经获得‘读存储卡’权限");
+                }
+                break;
+            case R.id.tv_sms:
+                //READ_SMS是读取短信，SEND_SMS是发送短信
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) !=
+                        PackageManager.PERMISSION_GRANTED){//拒绝了权限，或者没有获得权限
+
+                    showTipsDialog("读取短信", Manifest.permission.READ_SMS, 104);
+                } else {
+                    showToast("已经获得‘读取短信’权限");
+                }
+                break;
+            case R.id.tv_phone:
+                //CALL_PHONE是拨打电话
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) !=
+                        PackageManager.PERMISSION_GRANTED){//拒绝了权限，或者没有获得权限
+
+                    showTipsDialog("拨打电话", Manifest.permission.CALL_PHONE, 105);
+                } else {
+                    showToast("已经获得‘拨打电话’权限");
+                }
+                break;
+            case R.id.tv_record:
+                //RECORD_AUDIO是录音
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) !=
+                        PackageManager.PERMISSION_GRANTED){//拒绝了权限，或者没有获得权限
+
+                    showTipsDialog("录音", Manifest.permission.RECORD_AUDIO, 106);
+                } else {
+                    showToast("已经获得‘录音’权限");
+                }
+                break;
+            case R.id.tv_camera:
+                //CAMERA是调用相机
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) !=
+                        PackageManager.PERMISSION_GRANTED){//拒绝了权限，或者没有获得权限
+
+                    showTipsDialog("调用相机", Manifest.permission.CAMERA, 107);
+                } else {
+                    showToast("已经获得‘调用相机’权限");
+                }
+                break;
+            case R.id.tv_calender:
+                //WRITE_CALENDAR是写日历
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_CALENDAR) !=
+                        PackageManager.PERMISSION_GRANTED){//拒绝了权限，或者没有获得权限
+
+                    showTipsDialog("写日历", Manifest.permission.WRITE_CALENDAR, 108);
+                } else {
+                    showToast("已经获得‘写日历’权限");
+                }
+                break;
+            case R.id.tv_sensor:
+                //BODY_SENSORS是传感器权限
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.BODY_SENSORS) !=
+                        PackageManager.PERMISSION_GRANTED){//拒绝了权限，或者没有获得权限
+
+                    showTipsDialog("传感器", Manifest.permission.BODY_SENSORS, 109);
+                } else {
+                    showToast("已经获得‘传感器’权限");
+                }
+                break;
+        }
+    }
+
+    /**
+     * ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.READ_CONTACTS)
+     * 如果应用之前请求过此权限但用户拒绝了请求，此方法将返回 true。
+     * 如果用户在过去拒绝了权限请求，并在权限请求系统对话框中选择了 Don’t ask again 选项，此方法将返回 false。
+     * 如果设备规范禁止应用具有该权限，此方法也会返回 false。
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode){
+            case 101:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    showToast("已经获得‘读取联系人’权限？？？");
+                } else {
+                    //拒绝了权限
+                    showToast("拒绝获得‘读取联系人’权限");
+                    getAppDetailSettingIntent("读取联系人");
+                }
+                break;
+            case 102:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    //获取了权限
+                    showToast("已经获得‘GPS定位’权限？？？");
+                } else {
+                    //拒绝了权限
+                    showToast("拒绝获得‘GPS定位’权限");
+                    getAppDetailSettingIntent("GPS定位");
+                }
+                break;
+            case 103:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    //获取了权限
+                    showToast("已经获得‘读存储卡’权限？？？");
+                } else {
+                    //拒绝了权限
+                    showToast("拒绝获得‘读存储卡’权限");
+                    getAppDetailSettingIntent("读存储卡");
+                }
+                break;
+            case 104:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    //获取了权限
+                    showToast("已经获得‘读取短信’权限？？？");
+                } else {
+                    //拒绝了权限
+                    showToast("拒绝获得‘读取短信’权限");
+                    getAppDetailSettingIntent("读取短信");
+                }
+                break;
+            case 105:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    //获取了权限
+                    showToast("已经获得‘拨打电话’权限？？？");
+                } else {
+                    //拒绝了权限
+                    showToast("拒绝获得‘拨打电话’权限");
+                    getAppDetailSettingIntent("拨打电话");
+                }
+                break;
+            case 106:
+                //录音默认询问，请求权限会弹窗
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    //获取了权限
+                    showToast("已经获得‘录音’权限？？？");
+                } else {
+                    //拒绝了权限
+                    showToast("拒绝获得‘录音’权限");
+                    getAppDetailSettingIntent("录音");
+                }
+                break;
+            case 107:
+                //相机默认询问，请求权限会弹窗
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    //获取了权限
+                    showToast("已经获得‘调用相机’权限？？？");
+                } else {
+                    //拒绝了权限
+                    showToast("拒绝获得‘调用相机’权限");
+                    getAppDetailSettingIntent("调用相机");
+                }
+                break;
+            case 108:
+                //日历默认询问，请求权限会弹窗
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    //获取了权限
+                    showToast("已经获得‘写日历’权限？？？");
+                } else {
+                    //拒绝了权限
+                    showToast("拒绝获得‘写日历’权限");
+                    getAppDetailSettingIntent("写日历");
+                }
+                break;
+            case 109:
+                //传感器默认允许，不会弹窗
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    //获取了权限
+                    showToast("已经获得‘传感器’权限？？？");
+                } else {
+                    //拒绝了权限
+                    showToast("拒绝获得‘传感器’权限");
+                    getAppDetailSettingIntent("传感器");
+                }
+                break;
+        }
+    }
+
+    /**
+     * 显示对话框，提示用户允许权限
+     * @param name
+     */
+    public void showTipsDialog(String name, final String permission, final int code){
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)){
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("权限申请提示");
+            builder.setMessage("当前应用缺少"+name+"权限。是否立即申请权限？");
+            builder.setNegativeButton("取消", null);
+            builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{
+                            permission},code);
+                }
+            });
+            builder.create().show();
+        } else {
+            showToast("我们需要"+name+"权限，给我吧！");
+            //拒绝后不再询问选中的话，下面就不会在执行
+            //如果选中不再询问，则询问状态会变成拒绝，否则一直是询问状态
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{
+                    permission},code);
+        }
+    }
+
+    /**
+     * 跳转到App详情页
+     */
+    public void getAppDetailSettingIntent(String name) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("权限申请提示");
+        builder.setMessage("当前应用缺少"+name+"权限。请到应用信息——>权限管理中手动给予权限。");
+        builder.setNegativeButton("取消", null);
+        builder.setPositiveButton("设置", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent localIntent = new Intent();
+                localIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                if (Build.VERSION.SDK_INT >= 9) {
+                    localIntent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
+                    localIntent.setData(Uri.fromParts("package", getPackageName(), null));
+                } else if (Build.VERSION.SDK_INT <= 8) {
+                    localIntent.setAction(Intent.ACTION_VIEW);
+                    localIntent.setClassName("com.android.settings","com.android.settings.InstalledAppDetails");
+                    localIntent.putExtra("com.android.settings.ApplicationPkgName", getPackageName());
+                }
+                startActivity(localIntent);
+            }
+        });
+        builder.create().show();
+    }
+
+}
