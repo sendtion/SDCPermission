@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">SDCPermission</string>
-    <string name="action_settings">MIUI权限</string>
+    <string name="action_settings">第三方库处理权限</string>
 
     <string name="title_main">SDCPermission</string>
-    <string name="title_miui">MIUI系统</string>
+    <string name="title_third">第三方库处理</string>
 
     <string name="permission_get_accounts_hint">没有此权限，无法开启这个功能，请开启权限。PERMISSION_GET_ACCOUNTS</string>
     <string name="permission_read_phone_hint">没有此权限，无法开启这个功能，请开启权限。PERMISSION_READ_PHONE_STATE</string>

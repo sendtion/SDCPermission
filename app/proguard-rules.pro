@@ -23,3 +23,18 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+
+# 张鸿洋
+-dontwarn com.zhy.m.**
+-keep class com.zhy.m.** {*;}
+-keep interface com.zhy.m.** { *; }
+-keep class **$$PermissionProxy { *; }
+
+# 严振杰
+-keepclassmembers class ** {
+    @com.yanzhenjie.permission.PermissionYes <methods>;
+}
+-keepclassmembers class ** {
+    @com.yanzhenjie.permission.PermissionNo <methods>;
+}

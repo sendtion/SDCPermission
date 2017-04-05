@@ -28,8 +28,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MIUIActivity"
-            android:label="@string/title_miui">
+            android:name=".ThirdActivity"
+            android:label="@string/title_third">
         </activity>
     </application>
 

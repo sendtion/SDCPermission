@@ -20,8 +20,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 /**
- * Android 6.0原生系统运行时权限适配
- * 在联想乐檬X3测试通过
+ * 小米MIUI系统下Android6.0运行时权限的处理，原生和MIUI下通用
+ * 已知：如果全部手动设置为询问，则日历、录音、相机、存储卡四个权限会弹窗提示，其他的不会弹窗提示
  */
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "MainActivity";//快捷键logt
@@ -79,10 +79,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_miui) {
+        if (id == R.id.action_third) {
             //跳转到MIUI的权限适配界面
             Intent intent = new Intent();
-            intent.setClass(this, MIUIActivity.class);
+            intent.setClass(this, ThirdActivity.class);
             startActivity(intent);
             return true;
         }
@@ -93,6 +93,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
 
+
+    //（1）当在miui设置成允许时：android自动允许权限，即checkSelfPermission返回0.
+    //（2）当在miui设置成拒绝时：此时，checkSelfPermission，返回-1，需要开发者手动申请权限，
+    // miui会默认申请成功，并不会弹出android系统的权限申请框，
+    //（3）设置成询问时：checkSelfPermission，返回-1，需要开发者手动申请权限，miui会默认申请成功，
+    // 并不会弹出android系统的权限申请框，
     @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -167,6 +173,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.tv_calender:
+                //MIUI默认询问，第一次返回-1，请求权限后miui自动给予权限，不会弹出对话框，此后一直返回0
                 //WRITE_CALENDAR是写日历
                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_CALENDAR) !=
                         PackageManager.PERMISSION_GRANTED){//拒绝了权限，或者没有获得权限
@@ -318,8 +325,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             builder.create().show();
         } else {
             showToast("我们需要"+name+"权限，给我吧！");
-            //拒绝后不再询问选中的话，下面就不会在执行
-            //如果选中不再询问，则询问状态会变成拒绝，否则一直是询问状态
+            //MIUI在此处，除了日历、录音、相机、存储卡会弹窗，你可以选择拒绝或者允许
+            //其他权限不弹窗，直接返回0，也就是直接允许了，此时权限状态仍然为询问状态
+            //MIUI上拒绝后不会再弹窗，相当于选中了不再询问，权限状态由询问变为拒绝，需要手动给予权限
+            //MIUI上允许后，权限状态由询问变为允许
+            //也就是说，MIUI上不会走上一步：shouldShowRequestPermissionRationale(this, permission)
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{
                     permission},code);
         }
@@ -351,5 +361,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
         builder.create().show();
     }
-
 }
